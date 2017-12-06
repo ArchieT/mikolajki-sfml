@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 #include <iostream>
 //#include <cstdlib>
 //#include <ctime>
@@ -32,11 +33,37 @@ void smok(int xs, int ys, sf::RenderWindow &window) {
     }
 }
 
+void kolko(sf::RenderWindow &window) {
+    sf::CircleShape big(300);
+    big.setPosition(100,0);
+    big.setFillColor(sf::Color(255,50,200,220));
+    window.draw(big);
+}
+
+typedef std::tuple<double,double> point;
+typedef std::tuple<point,point,point> three_points;
+
+void sierpinski(three_points p, sf::RenderWindow &window) {
+    sf::Vertex line[4];
+    line[0].position = sf::Vector2<double>(p[0][0],p[0][1]);
+    line[0].color = sf::Color::Red;
+    line[1].position = sf::Vector2<double>(p[1][0],p[1][1]);
+    line[1].color = sf::Color::Green;
+    line[2].position = sf::Vector2<double>(p[2][0],p[2][1]);
+    line[2].color = sf::Color::Blue;
+    line[3].position = sf::Vector2<double>(p[3][0],p[3][1]);
+    line[3].color = sf::Color::Red;
+    sierpinski({{(p[0][0]+p[1][0])/2, (p[0][1]+p[1][1])/2},
+               {(p[1][0]+p[2][0])/2, (p[1][1]+p[2][1])/2},
+               {(p[2][0]+p[3][0])/2, (p[2][1]+p[3][1])/2}},window);
+}
+
 int main() {
     srand(static_cast<unsigned int>(time(nullptr)));
     sf::RenderWindow window(sf::VideoMode(W, H), "SFML");
     window.clear();
     smok(W / 2, H / 2, window);
+    kolko(window);
     window.display();
     while (window.isOpen()) {
         sf::Event event{};
